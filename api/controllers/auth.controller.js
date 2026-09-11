@@ -1,36 +1,58 @@
 import User from "../models/user.model.js";
+import { errorHandler } from "../utils/errro.js";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
-
   try {
     // 1. Check if username already exists
     const usernameExists = await User.findOne({ username });
     if (usernameExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Username is already taken!",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Username is already taken!" });
     }
 
     // 2. Check if email already exists
     const emailExists = await User.findOne({ email });
     if (emailExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is already registered!",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is already registered!" });
     }
 
     // 3. Hash password and save if everything is fine
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
-
     await newUser.save();
+
     res
       .status(201)
       .json({ success: true, message: "User created successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signIn = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const validUser = await User.findOne({ email });
+    if (!validUser) return next(errorHandler(404, "User not found!"));
+
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    if (!validPassword)
+      return next(errorHandler(401, "Invalid Email or Password!"));
+
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+
+    const { password: pass, ...rest } = validUser._doc;
+
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .json(rest);
   } catch (error) {
     next(error);
   }
