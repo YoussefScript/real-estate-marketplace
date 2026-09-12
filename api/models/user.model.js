@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default:
+        "https://theisig.com/wp-content/uploads/2024/04/649404a4f0a6df7621b33c27_blank-1.png.webp",
+    },
   },
   { timestamps: true },
 );
