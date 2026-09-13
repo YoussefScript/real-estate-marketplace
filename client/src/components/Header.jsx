@@ -34,7 +34,19 @@ export default function Header() {
           </Link>
           <Link to="/profile">
             {currentUser ? (
-              <img className="rounded-full h-7 w-7 object-cover" src={currentUser.avatar} alt="profile" />
+              <img
+                className="rounded-full h-7 w-7 object-cover border border-slate-300"
+                src={
+                  currentUser.avatar ||
+                  "https://res.cloudinary.com/demo/image/upload/w_200,h_200,c_fill,g_face,r_max/sample.jpg"
+                }
+                alt="profile"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://res.cloudinary.com/demo/image/upload/w_200,h_200,c_fill,g_face,r_max/sample.jpg";
+                }}
+              />
             ) : (
               <li className="text-slate-700 hover:underline">Sign in</li>
             )}
