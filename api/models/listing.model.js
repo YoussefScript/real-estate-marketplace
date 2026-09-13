@@ -10,7 +10,7 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    adress: {
+    address: {
       type: String,
       required: true,
     },
@@ -49,6 +49,10 @@ const listingSchema = new mongoose.Schema(
     imageUrls: {
       type: Array,
       required: true,
+    },
+    contactInfo: {
+      type: String,
+      default: "",
     },
     userRef: {
       type: String,
