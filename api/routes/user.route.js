@@ -4,11 +4,12 @@ import {
   test,
   updateUser,
 } from "../controllers/user.controller.js";
+import { verifyUser } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
 router.get("/test", test);
-router.put("/update/:id", updateUser);
-router.delete("/delete/:id", deleteUser);
+router.put("/update/:id", verifyUser, updateUser);
+router.delete("/delete/:id", verifyUser, deleteUser);
 
 export default router;
